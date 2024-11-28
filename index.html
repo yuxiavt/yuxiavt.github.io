@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votaciones C.E.T.A.C.</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle, #e0f7fa, #80deea, #006064); /* Fondo dinámico */
+            color: #000;
+        }
+        header {
+            background-color: #004d40; /* Verde oscuro */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9); /* Fondo blanco translúcido */
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 15px;
+            max-width: 600px;
+            box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #004d40;
+        }
+        input, select {
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            border: 2px solid #004d40; /* Borde verde oscuro */
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #388e3c; /* Verde más brillante al seleccionar */
+        }
+        button {
+            padding: 15px;
+            margin: 10px 0;
+            width: 100%;
+            background: linear-gradient(to right, #64dd17, #004d40); /* Botón degradado */
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            transform: scale(1.05); /* Crece ligeramente */
+            background: linear-gradient(to right, #388e3c, #006064); /* Color más fuerte */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .hidden {
+            display: none;
+        }
+        .chart-container {
+            width: 80%;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Votaciones C.E.T.A.C.</h1>
+    </header>
+    <div class="container" id="step1">
+        <h2>Seleccione el candidato de su preferencia</h2>
+        <label for="clave">Ingrese su clave (6 dígitos):</label>
+        <input type="text" id="clave" maxlength="6" placeholder="Ejemplo: 123456">
+        <button onclick="validateClave()">Continuar</button>
+    </div>
+    <div class="container hidden" id="step2">
+        <h2>Seleccione su carrera y grado</h2>
+        <label for="carrera">Carrera:</label>
+        <select id="carrera">
+            <option value="programacion">Programación</option>
+            <option value="laboratorio">Laboratorio Ambiental</option>
+            <option value="recursos">Recursos Humanos</option>
+        </select>
+        <label for="grado">Grado:</label>
+        <select id="grado">
+            <option value="1">1°</option>
+            <option value="2">2°</option>
+            <option value="3">3°</option>
+            <option value="4">4°</option>
+            <option value="5">5°</option>
+            <option value="6">6°</option>
+        </select>
+        <label for="candidato">Seleccione el candidato:</label>
+        <select id="candidato">
+            <option value="candidato1">Candidato 1</option>
+            <option value="candidato2">Candidato 2</option>
+            <option value="candidato3">Candidato 3</option>
+            <option value="candidato4">Candidato 4</option>
+            <option value="candidato5">Candidato 5</option>
+        </select>
+        <button onclick="submitVote()">Votar</button>
+    </div>
+    <div class="container hidden" id="results">
+        <h2>Resultados</h2>
+        <div class="chart-container">
+            <canvas id="voteChart"></canvas>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let votes = { candidato1: 0, candidato2: 0, candidato3: 0, candidato4: 0, candidato5: 0 };
+
+        function validateClave() {
+            const clave = document.getElementById("clave").value;
+            if (clave.length === 6 && !isNaN(clave)) {
+                document.getElementById("step1").classList.add("hidden");
+                document.getElementById("step2").classList.remove("hidden");
+            } else {
+                alert("Por favor, ingrese una clave válida de 6 dígitos.");
+            }
+        }
+
+        function submitVote() {
+            const candidato = document.getElementById("candidato").value;
+
+            // Incrementar el voto del candidato seleccionado
+            votes[candidato] += 1;
+
+            alert("Tu voto ha sido registrado. ¡Gracias por participar!");
+            
+            // Actualizar y mostrar los resultados
+            showResults();
+        }
+
+        function showResults() {
+            document.getElementById("step2").classList.add("hidden");
+            document.getElementById("results").classList.remove("hidden");
+
+            const ctx = document.getElementById("voteChart").getContext("2d");
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Candidato 1", "Candidato 2", "Candidato 3", "Candidato 4", "Candidato 5"],
+                    datasets: [{
+                        label: "Votos",
+                        data: Object.values(votes),
+                        backgroundColor: ["#64dd17", "#006064", "#e0f7fa", "#ffeb3b", "#ff5722"],
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
